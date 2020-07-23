@@ -24,6 +24,13 @@ const database = {
             entries: 0,
             joined: new Date()
         }
+    ],
+    login:[
+        {
+            id: '987',
+            has: '',
+            email: ''
+        }
     ]
 }
 
@@ -45,7 +52,7 @@ app.post('/signin', (req, res)=>{
 app.post('/register', (req, res)=>{
     const{email, name, password} = req.body;
     database.users.push({
-        id: '124',
+        id: '125',
         name: name,
         email: email,
         password: password,
@@ -53,6 +60,37 @@ app.post('/register', (req, res)=>{
         joined: new Date()
     })
     res.json(database.users[database.users.length-1]);
+})
+
+//get by id
+app.get('/profile/:id', (req, res)=>{
+    //destructuring props
+    const {id} = req.params;
+    let found = false;
+    database.users.forEach(user=>{
+        if(user.id === id){
+            found = true;
+            res.json(user)
+        }
+    })
+    if(!found){
+        res.status(400).json('not found')
+    }
+})
+
+app.post('/image', (req, res)=>{
+    const {id} = req.body;
+    let found = false;
+    database.users.forEach(user=>{
+        if(user.id === id){
+            found = true;
+            user.entries++;
+            res.json(user.entries)
+        }
+    })
+    if(!found){
+        res.status(400).json('not found')
+    }
 })
 
 app.listen(4000, ()=>{
