@@ -21,33 +21,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const database = {
-  users: [
-    {
-      id: "123",
-      name: "John",
-      email: "john@gmail.com",
-      password: "cookies",
-      entries: 0,
-      joined: new Date(),
-    },
-    {
-      id: "124",
-      name: "Sally",
-      email: "sally@gmail.com",
-      password: "bananas",
-      entries: 0,
-      joined: new Date(),
-    },
-  ],
-  login: [
-    {
-      id: "987",
-      hash: "",
-      email: "",
-    },
-  ],
-};
 
 app.get("/", (req, res) => {
   res.send(database.users);
@@ -86,16 +59,15 @@ app.post("/register", (req, res) => {
 app.get("/profile/:id", (req, res) => {
   //destructuring props
   const { id } = req.params;
-  let found = false;
-  database.users.forEach((user) => {
-    if (user.id === id) {
-      found = true;
-      return res.json(user);
+  db.select('*').from('users').where({id})
+  .then(user=>{
+    if(user.length){
+      res.json(user[0]);
+    }else{
+      res.status(400).json('Not Found')
     }
-  });
-  if (!found) {
-    res.status(400).json("not found");
-  }
+  })
+  .catch(err=>res.status(400).json('error getting user'))
 });
 
 app.put('/image', (req, res) => {
